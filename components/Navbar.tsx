@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default async function Navbar() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/40 backdrop-blur-xl supports-[backdrop-filter]:bg-black/20 shadow-sm shadow-black/50 transition-all duration-300">

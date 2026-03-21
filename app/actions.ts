@@ -32,7 +32,6 @@ export async function createQuestion(formData: FormData) {
   });
 
   revalidatePath('/');
-  return { success: true, id: question.id };
 }
 
 export async function createAnswer(formData: FormData) {
@@ -59,5 +58,4 @@ export async function createAnswer(formData: FormData) {
   });
 
   revalidatePath(`/question/${questionId}`);
-  return { success: true, id: answer.id };
 }

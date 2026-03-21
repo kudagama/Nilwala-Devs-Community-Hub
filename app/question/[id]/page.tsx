@@ -7,7 +7,7 @@ import Image from "next/image";
 import { ArrowBigUp, User as UserIcon, MessageSquare } from "lucide-react";
 import { notFound } from "next/navigation";
 
-export default async function QuestionDetails({ params }: { params: { id: string } }) {
+export default async function QuestionDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const question = await prisma.question.findUnique({

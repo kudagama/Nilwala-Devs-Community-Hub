@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { formatDistanceToNow } from "date-fns";
 import { createClient } from "@/lib/supabase/server";

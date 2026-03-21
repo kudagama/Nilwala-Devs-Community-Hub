@@ -7,12 +7,14 @@ import { X, Lock, LogIn } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { signInWithGoogle } from "../auth/actions";
 
+import { User } from "@supabase/supabase-js";
+
 export default function AskQuestion() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

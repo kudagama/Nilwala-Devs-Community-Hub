@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageSquare, ArrowBigUp, User as UserIcon } from "lucide-react";
+import { User as UserIcon } from "lucide-react";
 import Image from "next/image";
 
 export interface Question {

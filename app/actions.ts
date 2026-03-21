@@ -27,10 +27,37 @@ export async function createQuestion(formData: FormData) {
       title,
       content,
       tags,
-      authorId: user.id, // Linking to the authenticated user!
+      authorId: user.id,
     },
   });
 
   revalidatePath('/');
   return { success: true, id: question.id };
+}
+
+export async function createAnswer(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('You must be signed in to post an answer.');
+  }
+
+  const content = formData.get('content') as string;
+  const questionId = formData.get('questionId') as string;
+
+  if (!content || !questionId) {
+    throw new Error('Content is required.');
+  }
+
+  const answer = await prisma.answer.create({
+    data: {
+      content,
+      questionId,
+      authorId: user.id,
+    },
+  });
+
+  revalidatePath(`/question/${questionId}`);
+  return { success: true, id: answer.id };
 }

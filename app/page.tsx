@@ -2,38 +2,36 @@ import QuestionCard, { Question } from "@/components/QuestionCard";
 import { prisma } from "@/lib/db";
 import { formatDistanceToNow } from "date-fns";
 
-// Prevent Next.js from statically prerendering this page at build time.
-// Data is fetched live from Supabase on every request.
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function Home() {
   const dbQuestions = await prisma.question.findMany({
     include: {
-      author: true, // Fetch the real author info!
+      author: true,
+      _count: {
+        select: { answers: true }
+      }
     },
     orderBy: {
       createdAt: "desc",
     },
   });
 
-  // Transform db records into the shape our QuestionCard expects
   const MOCK_QUESTIONS: Question[] = dbQuestions.map((q) => ({
     id: q.id,
     title: q.title,
     description: q.content,
     tags: q.tags,
     votes: q.votes,
-    answers: 0, // Future: fetch answers count
+    answers: q._count.answers, // Real answers count!
     author: q.author.name || "Software Engineer",
-    authorImage: q.author.image || undefined, // Passing the avatar URL!
+    authorImage: q.author.image || undefined,
     timeAgo: formatDistanceToNow(q.createdAt, { addSuffix: true }),
   }));
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 relative z-0">
-      
-      {/* Decorative Glow */}
       <div className="absolute top-10 right-20 w-72 h-72 bg-indigo-600/20 rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none" />
 
       <div className="flex items-center justify-between mb-10 pb-4 border-b border-white/5">

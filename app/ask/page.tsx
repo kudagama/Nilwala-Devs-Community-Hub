@@ -1,16 +1,41 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createQuestion } from "../actions";
+import { X } from "lucide-react";
 
 export default function AskQuestion() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      const newTag = tagInput.trim();
+      if (newTag && !tags.includes(newTag)) {
+        if (tags.length < 5) {
+          setTags([...tags, newTag]);
+          setTagInput("");
+        }
+      }
+    } else if (e.key === "Backspace" && !tagInput && tags.length > 0) {
+      setTags(tags.slice(0, -1));
+    }
+  };
+
+  const removeTag = (indexToRemove: number) => {
+    setTags(tags.filter((_, index) => index !== indexToRemove));
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    
+    // Add the tags array as a space-separated string to match the Server Action's expectations
+    formData.set("tags", tags.join(" "));
 
     startTransition(async () => {
       try {
@@ -89,16 +114,39 @@ export default function AskQuestion() {
                 Tags
               </label>
               <p className="text-sm text-zinc-500 font-medium">
-                Add up to 5 space-separated tags to describe what your question is about.
+                Type a tag and press **Space** or **Enter** to add it (max 5).
               </p>
             </div>
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              placeholder="e.g. reactjs nodejs docker"
-              className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-base text-zinc-200 placeholder-zinc-600 focus:border-indigo-500/50 focus:bg-white-[0.05] focus:outline-none focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300 shadow-inner group-hover:border-white/20"
-            />
+            
+            <div className="w-full min-h-[54px] rounded-xl border border-white/10 bg-black/40 px-4 py-2 flex flex-wrap items-center gap-2 focus-within:border-indigo-500/50 focus-within:ring-4 focus-within:ring-indigo-500/20 transition-all duration-300 shadow-inner group-hover:border-white/20">
+              {tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="flex items-center gap-1.5 rounded-lg bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 text-sm font-medium text-indigo-300 transition-all"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(index)}
+                    className="hover:text-indigo-100 transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+              
+              <input
+                type="text"
+                id="tags-input"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                disabled={tags.length >= 5}
+                placeholder={tags.length === 0 ? "e.g. react nextjs prisma" : ""}
+                className="flex-1 bg-transparent border-none outline-none text-base text-zinc-200 placeholder-zinc-600 min-w-[120px] disabled:opacity-0"
+              />
+            </div>
+            <input type="hidden" name="tags" value={tags.join(" ")} />
           </div>
 
           <div className="pt-6 flex flex-col sm:flex-row items-center gap-5 border-t border-white/10">

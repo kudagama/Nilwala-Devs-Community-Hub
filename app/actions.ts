@@ -2,8 +2,16 @@
 
 import { prisma } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { createClient } from '@/lib/supabase/server';
 
 export async function createQuestion(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('You must be signed in to post a question.');
+  }
+
   const title = formData.get('title') as string;
   const content = formData.get('description') as string;
   const tagsString = formData.get('tags') as string;
@@ -19,8 +27,7 @@ export async function createQuestion(formData: FormData) {
       title,
       content,
       tags,
-      // For votes, it will default to 0 per schema
-      // I am assuming the author field isn't in schema, but for UI sake we can mock it on fetch or add it later.
+      authorId: user.id, // Linking to the authenticated user!
     },
   });
 

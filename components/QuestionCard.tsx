@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { MessageSquare, ArrowBigUp } from "lucide-react";
+import { MessageSquare, ArrowBigUp, User as UserIcon } from "lucide-react";
+import Image from "next/image";
 
 export interface Question {
   id: string;
@@ -9,6 +10,7 @@ export interface Question {
   votes: number;
   answers: number;
   author: string;
+  authorImage?: string; // Optional avatar URL
   timeAgo: string;
 }
 
@@ -25,7 +27,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
 
       {/* Metrics Sidebar */}
       <div className="flex sm:flex-col sm:items-end gap-5 sm:gap-2 shrink-0 w-24 relative z-10">
-        <div className="flex flex-col items-center sm:items-end gap-0.5 group/votes">
+        <div className="flex flex-col items-center sm:items-end gap-0.5 group/votes cursor-default">
           <span className="font-bold text-lg text-white group-hover/votes:text-indigo-400 transition-colors">
             {question.votes}
           </span>
@@ -74,8 +76,20 @@ export default function QuestionCard({ question }: QuestionCardProps) {
           </div>
 
           <div className="text-xs flex items-center gap-1.5 text-zinc-500">
-            <div className="flex items-center gap-1 bg-white/5 rounded-full px-2 py-1 cursor-pointer hover:bg-white/10 transition-colors">
-              <span className="font-medium text-pink-300 drop-shadow-sm">
+            <div className="flex items-center gap-2 bg-white/5 rounded-full pl-1.5 pr-3 py-1 cursor-pointer hover:bg-white/10 transition-colors border border-white/5">
+               <div className="relative h-5 w-5 rounded-full overflow-hidden border border-white/10 bg-indigo-500/20">
+                  {question.authorImage ? (
+                    <Image
+                      src={question.authorImage}
+                      alt="Author Avatar"
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <UserIcon className="h-3 w-3 m-auto mt-1 text-indigo-300" />
+                  )}
+                </div>
+              <span className="font-bold text-zinc-300 group-hover:text-pink-300 transition-colors">
                 {question.author}
               </span>
             </div>

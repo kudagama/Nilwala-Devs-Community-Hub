@@ -9,6 +9,9 @@ export const revalidate = 0;
 
 export default async function Home() {
   const dbQuestions = await prisma.question.findMany({
+    include: {
+      author: true, // Fetch the real author info!
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -21,8 +24,9 @@ export default async function Home() {
     description: q.content,
     tags: q.tags,
     votes: q.votes,
-    answers: 0, // In a real app, this would be a relation count
-    author: "anonymousHero", // Mocking author for now
+    answers: 0, // Future: fetch answers count
+    author: q.author.name || "Software Engineer",
+    authorImage: q.author.image || undefined, // Passing the avatar URL!
     timeAgo: formatDistanceToNow(q.createdAt, { addSuffix: true }),
   }));
 

@@ -10,6 +10,16 @@ generator client {
 datasource db {
   provider  = "postgresql"
 }
+
+model User {
+  id        String     @id @default(uuid()) // In Supabase, this will be the auth user's ID
+  email     String     @unique
+  name      String?
+  image     String?
+  questions Question[]
+  createdAt DateTime   @default(now())
+}
+
 model Question {
   id          String   @id @default(uuid())
   title       String
@@ -17,4 +27,6 @@ model Question {
   tags        String[]
   createdAt   DateTime @default(now())
   votes       Int      @default(0)
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
 }

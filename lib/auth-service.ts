@@ -10,8 +10,8 @@ export async function ensureUser(supabaseUser: SupabaseUser) {
   const user = await prisma.user.upsert({
     where: { id },
     update: {
-      name: user_metadata.full_name || user_metadata.name || user.name,
-      image: user_metadata.avatar_url || user_metadata.picture || user.image,
+      name: user_metadata.full_name || user_metadata.name,
+      image: user_metadata.avatar_url || user_metadata.picture,
     },
     create: {
       id,

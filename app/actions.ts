@@ -22,7 +22,7 @@ export async function createQuestion(formData: FormData) {
     throw new Error('Title and description are required.');
   }
 
-  const question = await prisma.question.create({
+  await prisma.question.create({
     data: {
       title,
       content,
@@ -49,7 +49,7 @@ export async function createAnswer(formData: FormData) {
     throw new Error('Content is required.');
   }
 
-  const answer = await prisma.answer.create({
+  await prisma.answer.create({
     data: {
       content,
       questionId,

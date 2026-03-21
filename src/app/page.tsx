@@ -2,6 +2,11 @@ import QuestionCard, { Question } from "@/components/QuestionCard";
 import { prisma } from "@/lib/db";
 import { formatDistanceToNow } from "date-fns";
 
+// Prevent Next.js from statically prerendering this page at build time.
+// Data is fetched live from Supabase on every request.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function Home() {
   const dbQuestions = await prisma.question.findMany({
     orderBy: {

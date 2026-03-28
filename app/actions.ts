@@ -6,7 +6,6 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function createQuestion(formData: FormData) {
   const supabase = await createClient();
-  if (!supabase) throw new Error("Supabase client not initialized");
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -37,7 +36,6 @@ export async function createQuestion(formData: FormData) {
 
 export async function createAnswer(formData: FormData) {
   const supabase = await createClient();
-  if (!supabase) throw new Error("Supabase client not initialized");
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -66,7 +64,6 @@ export async function createAnswer(formData: FormData) {
 
 export async function toggleVote(questionId: string, value: number) {
   const supabase = await createClient();
-  if (!supabase) throw new Error("Supabase client not initialized");
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -130,7 +127,6 @@ export async function toggleVote(questionId: string, value: number) {
 
 export async function deleteAnswer(answerId: string, questionId: string) {
   const supabase = await createClient();
-  if (!supabase) throw new Error("Supabase client not initialized");
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -154,7 +150,6 @@ export async function deleteAnswer(answerId: string, questionId: string) {
 
 export async function updateAnswer(formData: FormData) {
   const supabase = await createClient();
-  if (!supabase) throw new Error("Supabase client not initialized");
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

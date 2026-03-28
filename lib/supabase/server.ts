@@ -6,10 +6,7 @@ export async function createClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    // During Next.js static prerendering (build time), 
-    // these variables might be missing if not set in the CI.
-    // Returning null for safe handling in components.
-    return null;
+    throw new Error('Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
   }
 
   const cookieStore = await cookies()

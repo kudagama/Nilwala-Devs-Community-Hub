@@ -32,7 +32,7 @@ export default async function QuestionDetails({ params }: { params: Promise<{ id
   }
 
   const supabase = await createClient();
-  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  const user = (await supabase.auth.getUser()).data.user;
 
   let initialUserVote = 0;
   if (user) {

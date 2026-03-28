@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { createAnswer } from "@/app/actions";
 import Image from "next/image";
-import { ArrowBigUp, User as UserIcon, MessageSquare } from "lucide-react";
+import { MessageSquare, User as UserIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import VoteButtons from "@/components/VoteButtons";
 import AnswerCard from "@/components/AnswerCard";
@@ -111,7 +111,7 @@ export default async function QuestionDetails({ params }: { params: Promise<{ id
            {question.answers.map((answer) => (
               <AnswerCard 
                 key={answer.id} 
-                answer={answer} 
+                answer={{ ...answer, codeSnippet: (answer as unknown as { codeSnippet: string | null }).codeSnippet ?? null }} 
                 currentUserId={user?.id} 
               />
             ))}

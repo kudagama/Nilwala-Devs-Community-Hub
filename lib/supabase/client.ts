@@ -8,7 +8,7 @@ export function createClient() {
     // Return a proxy or throw a more helpful error if needed, 
     // but for the UI to not crash during build/prerender:
     console.warn("Supabase URL or Key is missing. Client functionality will be limited.");
-    return null as any; 
+    return null as unknown as ReturnType<typeof createBrowserClient>;
   }
 
   return createBrowserClient(supabaseUrl, supabaseAnonKey)

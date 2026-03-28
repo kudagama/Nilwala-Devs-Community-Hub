@@ -19,7 +19,8 @@ export default function AskQuestion() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
+    if (!supabase) { setIsLoading(false); return; }
+    supabase.auth.getUser().then(({ data }: { data: { user: User | null } }) => {
       setUser(data.user);
       setIsLoading(false);
     });

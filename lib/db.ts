@@ -6,13 +6,13 @@ import { PrismaPg } from '@prisma/adapter-pg';
 const pool = new Pool({ connectionString: process.env.DATABASE_URL as string });
 const adapter = new PrismaPg(pool);
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const globalForPrisma = global as unknown as { prisma_v4: PrismaClient };
 
 export const prisma =
-  globalForPrisma.prisma ||
+  globalForPrisma.prisma_v4 ||
   new PrismaClient({
     adapter,
     log: ['query'],
   });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma_v4 = prisma;

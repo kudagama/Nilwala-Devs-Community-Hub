@@ -26,7 +26,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
       <div className="absolute -inset-10 bg-gradient-to-r from-indigo-500/0 via-purple-500/0 to-pink-500/0 opacity-0 group-hover:opacity-10 group-hover:from-indigo-500 group-hover:via-purple-500 group-hover:to-pink-500 blur-2xl transition-all duration-700 pointer-events-none" />
 
       {/* Metrics Sidebar */}
-      <div className="flex sm:flex-col sm:items-end gap-5 sm:gap-2 shrink-0 w-24 relative z-10">
+      <div className="flex sm:flex-col sm:items-end gap-5 sm:gap-2 shrink-0 w-24">
         <div className="flex flex-col items-center sm:items-end gap-0.5 group/votes cursor-default">
           <span className="font-bold text-lg text-white group-hover/votes:text-indigo-400 transition-colors">
             {question.votes}
@@ -51,8 +51,11 @@ export default function QuestionCard({ question }: QuestionCardProps) {
       </div>
 
       {/* Main Content */}
-      <div className="flex w-full flex-col relative z-10">
-        <Link href={`/question/${question.id}`} className="w-fit">
+      <div className="flex w-full flex-col">
+        <Link 
+          href={`/question/${question.id}`} 
+          className="after:absolute after:inset-0 after:z-[1] mb-2 group-hover:cursor-pointer"
+        >
           <h3 className="text-xl font-semibold text-indigo-300 group-hover:text-indigo-200 transition-colors mb-2 bg-gradient-to-r from-indigo-300 to-indigo-100 bg-clip-text">
             {question.title}
           </h3>
@@ -62,7 +65,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
         </p>
 
         {/* Footer Tags & Metadata */}
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-4 relative z-[2]">
           <div className="flex flex-wrap gap-2">
             {question.tags.map((tag) => (
               <span
@@ -89,7 +92,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
                     <UserIcon className="h-3 w-3 m-auto mt-1 text-indigo-300" />
                   )}
                 </div>
-              <span className="font-bold text-zinc-300 group-hover:text-pink-300 transition-colors">
+              <span className="font-bold text-zinc-300 hover:text-pink-300 transition-colors">
                 {question.author}
               </span>
             </div>

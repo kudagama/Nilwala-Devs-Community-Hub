@@ -6,6 +6,8 @@ import { createAnswer } from "@/app/actions";
 import Image from "next/image";
 import { ArrowBigUp, User as UserIcon, MessageSquare } from "lucide-react";
 import { notFound } from "next/navigation";
+import VoteButtons from "@/components/VoteButtons";
+import AnswerCard from "@/components/AnswerCard";
 
 export default async function QuestionDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -30,7 +32,22 @@ export default async function QuestionDetails({ params }: { params: Promise<{ id
   }
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+
+  let initialUserVote = 0;
+  if (user) {
+    const userVoteRecord = await prisma.questionVote.findUnique({
+      where: {
+        userId_questionId: {
+          userId: user.id,
+          questionId: question.id,
+        },
+      },
+    });
+    if (userVoteRecord) {
+      initialUserVote = userVoteRecord.value;
+    }
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 relative">
@@ -44,16 +61,11 @@ export default async function QuestionDetails({ params }: { params: Promise<{ id
 
         <div className="flex flex-col sm:flex-row gap-6 mb-10">
           {/* Vote Sidebar */}
-          <div className="flex sm:flex-col items-center gap-3 shrink-0">
-             <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-indigo-400 hover:border-indigo-400/50 transition-all">
-                <ArrowBigUp className="h-8 w-8" />
-             </button>
-             <span className="text-xl font-bold text-white">{question.votes}</span>
-             <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-pink-400 hover:border-pink-400/50 transition-all rotate-180">
-                <ArrowBigUp className="h-8 w-8" />
-             </button>
-          </div>
-
+          <VoteButtons 
+            questionId={question.id} 
+            initialVotes={question.votes} 
+            initialUserVote={initialUserVote} 
+          />
           <div className="flex-1">
              <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 mb-6 shadow-xl text-zinc-300 leading-relaxed whitespace-pre-wrap">
                 {question.content}
@@ -97,27 +109,12 @@ export default async function QuestionDetails({ params }: { params: Promise<{ id
 
         <div className="space-y-6">
            {question.answers.map((answer) => (
-              <div key={answer.id} className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 shadow-lg">
-                 <div className="text-zinc-300 mb-6 leading-relaxed whitespace-pre-wrap">
-                    {answer.content}
-                 </div>
-                 <div className="flex justify-end">
-                    <div className="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-1.5 border border-white/5">
-                       <div className="relative h-6 w-6 rounded-full overflow-hidden border border-white/10">
-                         {answer.author.image ? (
-                           <Image src={answer.author.image} alt="Author Avatar" fill className="object-cover" />
-                         ) : (
-                           <UserIcon className="h-3 w-3 m-auto mt-1.5 text-zinc-400" />
-                         )}
-                       </div>
-                       <div className="text-[11px]">
-                          <span className="font-bold text-zinc-300">{answer.author.name}</span>
-                          <span className="text-zinc-500 ml-2">{formatDistanceToNow(answer.createdAt, { addSuffix: true })}</span>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-           ))}
+              <AnswerCard 
+                key={answer.id} 
+                answer={answer} 
+                currentUserId={user?.id} 
+              />
+            ))}
         </div>
       </div>
 
@@ -127,13 +124,30 @@ export default async function QuestionDetails({ params }: { params: Promise<{ id
         {user ? (
           <form action={createAnswer} className="space-y-4">
             <input type="hidden" name="questionId" value={question.id} />
-            <textarea
-              name="content"
-              required
-              rows={6}
-              placeholder="Provide a detailed solution..."
-              className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-base text-zinc-200 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/20 transition-all outline-none resize-none"
-            ></textarea>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2 ml-1">Explanation</label>
+                <textarea
+                  name="content"
+                  required
+                  rows={4}
+                  placeholder="Provide a detailed explanation..."
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-base text-zinc-200 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/20 transition-all outline-none resize-y"
+                ></textarea>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2 ml-1">Code Snippet <span className="text-zinc-500 font-normal">(Optional)</span></label>
+                <textarea
+                  name="codeSnippet"
+                  rows={6}
+                  placeholder="Paste your code snippet here..."
+                  className="w-full rounded-xl border border-white/10 bg-[#0d1117]/80 px-5 py-4 font-mono text-[13px] leading-relaxed text-[#a5b4fc] focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/20 transition-all outline-none resize-y shadow-inner shadow-black/50"
+                  spellCheck={false}
+                ></textarea>
+              </div>
+            </div>
+            
             <button
               type="submit"
               className="rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-bold text-white hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-95"

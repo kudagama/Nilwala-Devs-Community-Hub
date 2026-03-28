@@ -18,12 +18,17 @@ export default function AskQuestion() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const supabase = createClient();
-    if (!supabase) { setIsLoading(false); return; }
-    supabase.auth.getUser().then(({ data }: { data: { user: User | null } }) => {
+    async function loadUser() {
+      const supabase = createClient();
+      if (!supabase) {
+        setIsLoading(false);
+        return;
+      }
+      const { data } = await supabase.auth.getUser();
       setUser(data.user);
       setIsLoading(false);
-    });
+    }
+    loadUser();
   }, []);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {

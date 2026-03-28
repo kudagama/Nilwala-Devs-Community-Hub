@@ -7,28 +7,31 @@ export default function SplashScreen() {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    // Only show once per session
-    const hasSeenSplash = sessionStorage.getItem('nilwala_splash_shown');
-    if (hasSeenSplash) {
-      setVisible(false);
-      return;
+    async function initSplash() {
+      const hasSeenSplash = sessionStorage.getItem('nilwala_splash_shown');
+      if (hasSeenSplash) {
+        setVisible(false);
+        return;
+      }
+
+      // Begin fade-out after 2.2 seconds
+      const fadeTimer = setTimeout(() => {
+        setFadeOut(true);
+      }, 2200);
+
+      // Fully remove after fade transition
+      const removeTimer = setTimeout(() => {
+        setVisible(false);
+        sessionStorage.setItem('nilwala_splash_shown', 'true');
+      }, 2900);
+
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(removeTimer);
+      };
     }
 
-    // Begin fade-out after 2.2 seconds
-    const fadeTimer = setTimeout(() => {
-      setFadeOut(true);
-    }, 2200);
-
-    // Fully remove after fade transition
-    const removeTimer = setTimeout(() => {
-      setVisible(false);
-      sessionStorage.setItem('nilwala_splash_shown', 'true');
-    }, 2900);
-
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(removeTimer);
-    };
+    initSplash();
   }, []);
 
   if (!visible) return null;

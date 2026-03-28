@@ -49,7 +49,7 @@ export default async function Home() {
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 text-sm font-medium text-indigo-300 mb-6">
               <Sparkles className="h-3.5 w-3.5" />
-              SE Community Hub
+              Nilwala Devs
             </div>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] mb-6">
               <span className="bg-gradient-to-br from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent">

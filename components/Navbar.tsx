@@ -14,7 +14,7 @@ export default async function Navbar() {
         <div className="flex items-center gap-8">
           <Link href="/" className="group flex items-center gap-2">
             <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent transform group-hover:scale-105 transition-transform duration-300">
-              SE Community Hub
+              Nilwala Devs
             </span>
           </Link>
 
